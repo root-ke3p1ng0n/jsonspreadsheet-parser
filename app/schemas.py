@@ -17,7 +17,7 @@ class ConversionRecords(ConversionRecordsBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserBase(BaseModel):
     username: str
@@ -31,4 +31,4 @@ class User(UserBase):
     conversion_records: list[ConversionRecords] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
