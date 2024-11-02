@@ -1,25 +1,46 @@
 services:
   api:
     build: .
-    container_name: api
+    container_name: jsonspreadsheet-api
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_HOST=${MYSQL_HOST}
     volumes:
       - ./app:/code/app
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - api-network
   db:
-    image: mysql/mysql-server:latest
-    container_name: mysql
+    container_name: jsonspreadsheet-db
+    image: mysql:8.0-debian
     restart: always
     environment:
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - '3307:3306'
     volumes:
-      - mysql-volume:/var/lib/mysql
+      - jsonspreadsheet-volume:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - api-network
 volumes:
-  mysql-volume:
+  jsonspreadsheet-volume:
     driver: local
+networks:
+  api-network:
+    driver: bridge
