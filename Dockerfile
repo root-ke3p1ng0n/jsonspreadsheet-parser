@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 
-WORKDIR /code
+WORKDIR /app
 
 
 RUN apt-get update && apt-get install -y \
@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 COPY ./requirements.txt .
 
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 
-COPY ./app .
+COPY ./app /app/app

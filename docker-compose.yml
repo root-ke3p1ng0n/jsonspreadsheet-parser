@@ -9,7 +9,7 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_HOST=${MYSQL_HOST}
     volumes:
-      - ./app:/code/app
+      - ./app:/app/app
     ports:
       - "8000:8000"
     depends_on:
